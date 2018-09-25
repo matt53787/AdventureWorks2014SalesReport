@@ -1,0 +1,21 @@
+﻿.w3-content {
+    max-width:100%;
+}
+
+input {
+    width: calc(100% - 8px);
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.tbLabel {
+    width: calc(100% - 8px);
+    display: block;
+    font-size: x-small;
+    background: #2196F3;
+    color: #FFFFFF;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}

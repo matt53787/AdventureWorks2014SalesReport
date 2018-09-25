@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AdventureWorks 2014 Invoice Report</title>
+    <link href="Content/W3.css" rel="stylesheet" />
+    <link href="Content/W3Custom.css" rel="stylesheet" />
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+    <script src="Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="Scripts/moment.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link href="Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        function RefreshTable() {
+            var StartDate = moment($('#StartDate').val()).format('YYYY-MM-DD');
+            var EndDate = moment($('#EndDate').val()).format('YYYY-MM-DD');
+
+            //Call for the data from the server.
+            $.ajax({
+                type: 'GET',
+                url: './API/Report/?StartDate=' + StartDate + '&EndDate=' + EndDate,
+                dataType: 'json',
+
+                //If the call is successful, do this stuff.
+                success: function (response) {
+
+                    var dataSet = [];
+                    for (var i = 0; i < response.length; i++) {
+                        var Item = response[i];
+
+                        var dataElement = [];
+                        dataElement[0] = Item["SoldAt"];
+                        dataElement[1] = Item["SoldTo"];
+                        dataElement[2] = Item["AccountNumber"];
+                        dataElement[3] = Item["InvoiceNumber"];
+                        dataElement[4] = Item["CustomerPO"];
+                        dataElement[5] = moment(Item["OrderDate"]).format('MM/DD/YYYY');
+                        dataElement[6] = moment(Item["DueDate"]).format('MM/DD/YYYY');
+                        dataElement[7] = Item["InvoiceTotal"];
+                        dataElement[8] = Item["ProductNumber"];
+                        dataElement[9] = Item["OrderQty"];
+                        dataElement[10] = Item["UnitNet"];
+                        dataElement[11] = Item["LineTotal"];
+                        dataSet.push(dataElement)
+                    }
+
+                    if (!$.fn.DataTable.isDataTable('#ResultTable')) {
+                        $('#ResultTable').DataTable({
+                            data: dataSet,
+                            "paging": false,
+                            "searching": false,
+                            "info": false
+                        });
+                    } else {
+                        var myDataTable = $('#ResultTable').DataTable();
+                        myDataTable.clear();
+                        myDataTable.rows.add(dataSet);
+                        myDataTable.draw();
+                    }
+                },
+                //If the ajax call fails, do this stuff. For now, we do nothing.
+                error: function (error) {
+
+                }
+            });
+        }
+
+        function DownloadExport() {
+            var StartDate = moment($('#StartDate').val()).format('YYYY-MM-DD');
+            var EndDate = moment($('#EndDate').val()).format('YYYY-MM-DD');
+
+            window.location.href = './API/Report/?StartDate=' + StartDate + '&EndDate=' + EndDate+'&Mode=Export';
+        }
+
+        //Initialize all our controls once the page finishes loading.
+        $(function () {
+            $('#StartDate').val(moment().subtract(1, 'months').startOf('month').format('MM/DD/YYYY'));
+            $('#EndDate').val(moment().subtract(1, 'months').endOf('month').format('MM/DD/YYYY'));
+            $('.datepicker').datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+            $('#ResultTable').DataTable({
+                "paging": false,
+                "searching": false,
+                "info": false
+            })
+        });
+    </script>
+</head>
+<body>
+    <div class="w3-container w3-content">
+        <div class="w3-row">
+            <div class="w3-col l4 m4 s6">
+                <span class="tbLabel">Start Date</span>
+                <input id="StartDate" class="datepicker" type="text" />
+            </div>
+            <div class="w3-col l4 m4 s6">
+                <span class="tbLabel">End Date</span>
+                <input id="EndDate" class="datepicker" type="text" />
+            </div>
+            <div class="w3-col l4 m4 s6">
+                <button class="w3-btn w3-white w3-border w3-border-blue w3-round" onclick="RefreshTable();">Submit</button>
+                <button class="w3-btn w3-white w3-border w3-border-blue w3-round" onclick="DownloadExport();">Export</button>
+            </div>
+        </div>
+        <div class="w3-row">
+            <div class="w3-col l12 m12 s12" style="overflow:auto;">
+                <table id="ResultTable">
+                    <thead>
+                        <tr>
+                            <th>SoldAt</th>
+                            <th>SoldTo</th>
+                            <th>AccountNumber</th>
+                            <th>InvoiceNumber</th>
+                            <th>CustomerPO</th>
+                            <th>OrderDate</th>
+                            <th>DueDate</th>
+                            <th>InvoiceTotal</th>
+                            <th>ProductNumber</th>
+                            <th>OrderQty</th>
+                            <th>UnitNet</th>
+                            <th>LineTotal</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
