@@ -49,6 +49,7 @@ namespace AdventureWorks2014SalesReport.Controllers
 
                 var normalStyle = "Normal";
                 var acctStyle = wbk.CreateAccountingFormat();
+                var dateStyle = wbk.CreateDateFormat();
 
                 //Turn our results into a list of CustomerInvoice for export 
                 List<CustomerInvoice> Invoices = new List<CustomerInvoice>();
@@ -78,13 +79,13 @@ namespace AdventureWorks2014SalesReport.Controllers
                     new Column { Title = "Account Number", Style = normalStyle, Action = i => i.AccountNumber, },
                     new Column { Title = "Invoice #", Style = normalStyle, Action = i => i.InvoiceNumber, },
                     new Column { Title = "Customer PO #", Style = normalStyle, Action = i => i.CustomerPO, },
-                    new Column { Title = "Order Date", Style = normalStyle, Action = i => i.OrderDate, },
-                    new Column { Title = "Due Date", Style = normalStyle, Action = i => i.DueDate, },
-                    new Column { Title = "Invoice Total", Style = normalStyle, Action = i => i.InvoiceTotal, },
+                    new Column { Title = "Order Date", Style = dateStyle, Action = i => i.OrderDate, },
+                    new Column { Title = "Due Date", Style = dateStyle, Action = i => i.DueDate, },
+                    new Column { Title = "Invoice Total", Style = acctStyle, Action = i => i.InvoiceTotal, },
                     new Column { Title = "Product Number", Style = normalStyle, Action = i => i.ProductNumber, },
                     new Column { Title = "Order Qty", Style = normalStyle, Action = i => i.OrderQty, },
-                    new Column { Title = "Unit Net", Style = normalStyle, Action = i => i.UnitNet, },
-                    new Column { Title = "Line Total", Style = normalStyle, Action = i => i.LineTotal, },
+                    new Column { Title = "Unit Net", Style = acctStyle, Action = i => i.UnitNet, },
+                    new Column { Title = "Line Total", Style = acctStyle, Action = i => i.LineTotal, },
                 };
 
                 sheet.SaveData(columns, Invoices);

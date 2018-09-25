@@ -13,6 +13,11 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script>
         function RefreshTable() {
+            //Clear the existing data from the table
+            var myDataTable = $('#ResultTable').DataTable();
+            myDataTable.clear();
+
+            //Get the dates in a format that works for URLs
             var StartDate = moment($('#StartDate').val()).format('YYYY-MM-DD');
             var EndDate = moment($('#EndDate').val()).format('YYYY-MM-DD');
 
@@ -37,27 +42,16 @@
                         dataElement[4] = Item["CustomerPO"];
                         dataElement[5] = moment(Item["OrderDate"]).format('MM/DD/YYYY');
                         dataElement[6] = moment(Item["DueDate"]).format('MM/DD/YYYY');
-                        dataElement[7] = Item["InvoiceTotal"];
+                        dataElement[7] = '$' + parseFloat(Item["InvoiceTotal"], 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
                         dataElement[8] = Item["ProductNumber"];
                         dataElement[9] = Item["OrderQty"];
-                        dataElement[10] = Item["UnitNet"];
-                        dataElement[11] = Item["LineTotal"];
+                        dataElement[10] = '$' + parseFloat(Item["UnitNet"], 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+                        dataElement[11] = '$' + parseFloat(Item["LineTotal"], 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
                         dataSet.push(dataElement)
                     }
 
-                    if (!$.fn.DataTable.isDataTable('#ResultTable')) {
-                        $('#ResultTable').DataTable({
-                            data: dataSet,
-                            "paging": false,
-                            "searching": false,
-                            "info": false
-                        });
-                    } else {
-                        var myDataTable = $('#ResultTable').DataTable();
-                        myDataTable.clear();
-                        myDataTable.rows.add(dataSet);
-                        myDataTable.draw();
-                    }
+                    myDataTable.rows.add(dataSet);
+                    myDataTable.draw();
                 },
                 //If the ajax call fails, do this stuff. For now, we do nothing.
                 error: function (error) {
@@ -110,18 +104,18 @@
                 <table id="ResultTable">
                     <thead>
                         <tr>
-                            <th>SoldAt</th>
-                            <th>SoldTo</th>
-                            <th>AccountNumber</th>
-                            <th>InvoiceNumber</th>
-                            <th>CustomerPO</th>
-                            <th>OrderDate</th>
-                            <th>DueDate</th>
-                            <th>InvoiceTotal</th>
-                            <th>ProductNumber</th>
-                            <th>OrderQty</th>
-                            <th>UnitNet</th>
-                            <th>LineTotal</th>
+                            <th>Sold At</th>
+                            <th>Sold To</th>
+                            <th>Account Number</th>
+                            <th>Invoice #</th>
+                            <th>Customer PO #</th>
+                            <th>Order Date</th>
+                            <th>Due Date</th>
+                            <th>Invoice Total</th>
+                            <th>Product Number</th>
+                            <th>Order Qty</th>
+                            <th>Unit Net</th>
+                            <th>Line Total</th>
                         </tr>
                     </thead>
                 </table>
